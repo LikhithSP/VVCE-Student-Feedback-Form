@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Feedback Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: url("hero-scaled-1.jpg") no-repeat center center fixed;
+  background-size: cover;
+  filter: blur(4px) brightness(0.7);
+}
+    .feedback-sheet {
+      background: #fff;
+      border-radius: 30px;
+      box-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13);
+      padding: 44px 36px 36px 36px;
+      min-width: 340px;
+      max-width: 480px;
+      width: 100%;
+      margin: 32px 0;
+      position: relative;
+      border: 1.5px solid #e0e4ed;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .feedback-sheet:before {
+      content: '';
+      position: absolute;
+      top: 0; left: 32px; right: 32px;
+      height: 18px;
+      background: repeating-linear-gradient(90deg, #e0e4ed 0 2px, transparent 2px 32px);
+      opacity: 0.4;
+      border-radius: 18px 18px 0 0;
+    }
+    .feedback-sheet h2 {
+      color: #22314a;
+      font-family: 'Inter', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      text-align: center;
+      font-size: 2em;
+    }
+    .feedback-sheet .subtitle {
+      color: #5a6a85;
+      font-size: 1.08em;
+      text-align: center;
+      margin-bottom: 28px;
+      font-weight: 400;
+    }
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #3b4a6b;
+      font-size: 1.04em;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 12px 1px;
+      border: 1.5px solid #e0e4ed;
+      border-radius: 7px;
+      background: #f7fafc;
+      color: #22314a;
+      font-size: 1.04em;
+      font-family: 'Inter', Arial, sans-serif;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+      box-shadow: none;
+      resize: none;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border: 1.5px solid #2563eb;
+      background: #fff;
+      box-shadow: 0 0 0 2px #2563eb22;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 7px;
+      background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+      color: #fff;
+      font-size: 1.08em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+    }
+    .submit-btn:hover {
+      background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 4px 16px 0 rgba(59,130,246,0.13);
+    }
+    .entries {
+      margin-top: 36px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 2px dashed #e0e4ed;
+      padding-top: 18px;
+    }
+    .entry {
+      background: #f7fafc;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 14px 14px 10px 14px;
+      box-shadow: 0 1px 4px rgba(30,42,80,0.06);
+      border-left: 4px solid #2563eb;
+      position: relative;
+      animation: fadeIn 0.7s;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .entry .name {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 1.04em;
+      margin-bottom: 2px;
+    }
+    .entry .message {
+      color: #22314a;
+      font-size: 0.98em;
+      margin-bottom: 2px;
+      word-break: break-word;
+    }
+    .entry .date {
+      font-size: 0.85em;
+      color: #8a99b5;
+      text-align: right;
+      margin-top: 4px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    @media (max-width: 900px) {
+      .feedback-sheet {
+        max-width: 90vw;
+        padding: 32px 4vw 28px 4vw;
+      }
+    }
+    @media (max-width: 600px) {
+      .feedback-sheet {
+        min-width: 98vw;
+        max-width: 100vw;
+        padding: 16px 2vw 12px 2vw;
+        border-radius: 0;
+        box-shadow: none;
+        border-width: 1px;
+      }
+      .feedback-sheet:before {
+        left: 8px; right: 8px; height: 10px;
+        border-radius: 10px 10px 0 0;
+      }
+      .form-label, .form-input, .form-textarea, .submit-btn {
+        font-size: 1em;
+      }
+      .entries {
+        margin-top: 18px;
+        padding-top: 10px;
+      }
+    }
+    @media (max-width: 400px) {
+      .feedback-sheet {
+        padding: 6px 1vw 6px 1vw;
+      }
+    }
+    @media (max-width: 600px) {
+      .feedback-sheet { min-width: 90vw; max-width: 98vw; padding: 20px 4vw; }
+    }
+  </style>
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script type="module" src="./supabaseConfig.js"></script>
+  <script type="module" src="./feedback.js"></script>
+</head>
+<body>
+  <div class="feedback-sheet">
+    <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
+    <h2>Student Feedback Form</h2>
+    <div class="subtitle">We value your feedback! Please share your thoughts and suggestions below.</div>
+    <form autocomplete="off">
+      <div class="form-group">
+        <label class="form-label" for="name">Your Name</label>
+        <input class="form-input" type="text" name="name" id="name" required maxlength="32" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="branch">Branch</label>
+        <select class="form-input" name="branch" id="branch" required>
+          <option value="" disabled selected>Select your branch</option>
+          <option value="CSE">CSE</option>
+          <option value="ISE">ISE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="ME">ME</option>
+          <option value="CIV">CIV</option>
+          <option value="AIML">AIML</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="sem">Semester</label>
+        <select class="form-input" name="sem" id="sem" required>
+          <option value="" disabled selected>Select your semester</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="message">Your Feedback</label>
+        <textarea class="form-textarea" name="message" id="message" required rows="3" maxlength="200"></textarea>
+      </div>
+      <button class="submit-btn" type="submit">Submit Feedback</button>
+    </form>
+    <div class="entries"></div>
+  </div>
+</body>
+</html>
