@@ -1,8 +1,8 @@
 # VVCE Student Feedback Form
 
-A simple web app for collecting student feedback, using Supabase as the backend and deployable on Netlify.
-
 <img src="./demo.png">
+
+<p align="center"><strong>A simple web app for collecting student feedback, using Supabase as the backend and deployable on Netlify.</strong></p>
 
 ## Features
 - Collects name, branch, semester, and feedback message
