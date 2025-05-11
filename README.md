@@ -2,6 +2,8 @@
 
 A simple web app for collecting student feedback, using Supabase as the backend and deployable on Netlify.
 
+<img src="./demo.png">
+
 ## Features
 - Collects name, branch, semester, and feedback message
 - Stores feedback securely in a Supabase database
