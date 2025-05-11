@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Feedback Form - Vidyavardhaka College of Engineering</title>
+  <title>Student Feedback Form</title>
   <link rel="icon" type="image/png" href="vvce-logo.png">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* Modern Split Layout */
     body {
       min-height: 100vh;
       margin: 0;
@@ -14,179 +15,316 @@
       align-items: center;
       justify-content: center;
       font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+      overflow-x: hidden;
     }
     body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: -1;
-  background: url("hero-scaled-1.jpg") no-repeat center center fixed;
-  background-size: cover;
-  filter: blur(4px) brightness(0.7);
-}
-    .feedback-sheet {
-      background: #fff;
-      border-radius: 30px;
-      box-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13);
-      padding: 44px 36px 36px 36px;
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      background: url("hero-scaled-1.jpg") no-repeat center center fixed;
+      background-size: cover;
+      filter: blur(8px) brightness(0.7);
+      opacity: 0.7;
+      animation: bgfadein 1.5s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes bgfadein {
+      from { opacity: 0; }
+      to { opacity: 0.7; }
+    }
+    .container-split {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 56px;
+      width: 100vw;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 56px 0;
+      background: none;
+      animation: slidein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes slidein {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .entries-panel {
+      background: rgba(255,255,255,0.92);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13), 0 1.5px 8px 0 #a5b4fc33;
+      padding: 38px 30px 30px 30px;
+      min-width: 340px;
+      max-width: 420px;
+      width: 100%;
+      border: 1.5px solid #e0e4ed;
+      box-sizing: border-box;
+      overflow-y: auto;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      backdrop-filter: blur(2px);
+      animation: fadeinleft 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeinleft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .entries-panel h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.5em;
+      color: #22314a;
+      letter-spacing: 0.5px;
+      font-weight: 800;
+      text-shadow: 0 2px 8px #a5b4fc22;
+      text-align: center;
+    }
+    .entries {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: #a5b4fc #e0e7ff;
+    }
+    .entry {
+      background: linear-gradient(100deg, #f0fdfa 0%, #e0e7ff 100%);
+      border-radius: 14px;
+      box-shadow: 0 2px 12px 0 rgba(59,130,246,0.10);
+      margin-bottom: 22px;
+      padding: 18px 20px 14px 20px;
+      border-left: 5px solid #6366f1;
+      transition: box-shadow 0.3s, transform 0.2s;
+      animation: entrypop 0.7s cubic-bezier(.4,0,.2,1);
+      opacity: 0.97;
+    }
+    .entry:hover {
+      box-shadow: 0 6px 24px 0 #6366f133;
+      transform: scale(1.025) translateY(-2px);
+      opacity: 1;
+    }
+    @keyframes entrypop {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 0.97; transform: scale(1) translateY(0); }
+    }
+    .entry .name {
+      font-weight: 800;
+      color: #6366f1;
+      margin-bottom: 4px;
+      font-size: 1.13em;
+      letter-spacing: 0.2px;
+    }
+    .entry .message {
+      color: #22314a;
+      margin-bottom: 8px;
+      font-size: 1.04em;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      line-height: 1.5;
+    }
+    .entry .date {
+      color: #888;
+      font-size: 0.93em;
+      text-align: right;
+      font-weight: 400;
+    }
+    .form-panel {
+      background: rgba(255,255,255,0.97);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13), 0 1.5px 8px 0 #a5b4fc33;
+      padding: 54px 38px 38px 38px;
       min-width: 340px;
       max-width: 480px;
       width: 100%;
-      margin: 32px 0;
-      position: relative;
       border: 1.5px solid #e0e4ed;
       box-sizing: border-box;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      animation: fadeinright 1.2s cubic-bezier(.4,0,.2,1);
+      backdrop-filter: blur(2px);
     }
-    .feedback-sheet:before {
-      content: '';
-      position: absolute;
-      top: 0; left: 32px; right: 32px;
-      height: 18px;
-      background: repeating-linear-gradient(90deg, #e0e4ed 0 2px, transparent 2px 32px);
-      opacity: 0.4;
-      border-radius: 18px 18px 0 0;
+    @keyframes fadeinright {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
     }
-    .feedback-sheet h2 {
+    .form-panel img {
+      margin-bottom: 12px;
+      filter: drop-shadow(0 2px 8px #6366f122);
+      animation: logo-bounce 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes logo-bounce {
+      0% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+      60% { transform: scale(1.1) translateY(8px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .form-panel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.5em;
       color: #22314a;
-      font-family: 'Inter', Arial, sans-serif;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+      font-weight: 800;
       text-align: center;
-      font-size: 2em;
+      text-shadow: 0 2px 8px #a5b4fc22;
     }
-    .feedback-sheet .subtitle {
-      color: #5a6a85;
-      font-size: 1.08em;
+    .form-panel .subtitle {
       text-align: center;
       margin-bottom: 28px;
-      font-weight: 400;
+      color: #3b4a6b;
+      font-size: 1.08em;
+      font-weight: 500;
+      letter-spacing: 0.1px;
     }
     .form-group {
       margin-bottom: 22px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .form-label {
       display: block;
       margin-bottom: 7px;
       color: #3b4a6b;
-      font-size: 1.04em;
-      font-weight: 600;
+      font-size: 1.08em;
+      font-weight: 700;
       letter-spacing: 0.2px;
     }
     .form-input, .form-textarea {
       width: 100%;
-      padding: 12px 1px;
+      padding: 13px 1px;
       border: 1.5px solid #e0e4ed;
-      border-radius: 7px;
+      border-radius: 8px;
       background: #f7fafc;
       color: #22314a;
-      font-size: 1.04em;
+      font-size: 1.08em;
       font-family: 'Inter', Arial, sans-serif;
       outline: none;
-      transition: border 0.2s, box-shadow 0.2s;
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
       box-shadow: none;
       resize: none;
+      font-weight: 500;
     }
     .form-input:focus, .form-textarea:focus {
-      border: 1.5px solid #2563eb;
+      border: 1.5px solid #6366f1;
       background: #fff;
-      box-shadow: 0 0 0 2px #2563eb22;
+      box-shadow: 0 0 0 2px #6366f122;
     }
     .submit-btn {
       width: 100%;
-      padding: 13px;
+      padding: 15px;
       border: none;
-      border-radius: 7px;
-      background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+      border-radius: 8px;
+      background: linear-gradient(90deg, #6366f1 0%, #2563eb 100%);
       color: #fff;
-      font-size: 1.08em;
-      font-weight: 700;
+      font-size: 1.13em;
+      font-weight: 800;
       letter-spacing: 0.5px;
       cursor: pointer;
-      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
       transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
     }
     .submit-btn:hover {
-      background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
-      transform: translateY(-1px) scale(1.01);
-      box-shadow: 0 4px 16px 0 rgba(59,130,246,0.13);
+      background: linear-gradient(90deg, #2563eb 0%, #6366f1 100%);
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 4px 16px 0 #6366f133;
     }
-    .entries {
-      margin-top: 36px;
-      max-height: 300px;
-      overflow-y: auto;
-      border-top: 2px dashed #e0e4ed;
-      padding-top: 18px;
-    }
-    .entry {
-      background: #f7fafc;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      padding: 14px 14px 10px 14px;
-      box-shadow: 0 1px 4px rgba(30,42,80,0.06);
-      border-left: 4px solid #2563eb;
-      position: relative;
-      animation: fadeIn 0.7s;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .entry .name {
+    #form-status {
+      margin-bottom: 18px;
+      text-align: center;
+      border-radius: 7px;
       font-weight: 700;
-      color: #2563eb;
-      font-size: 1.04em;
-      margin-bottom: 2px;
+      font-size: 1.08em;
+      letter-spacing: 0.1px;
+      box-shadow: 0 2px 8px 0 #6366f122;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
     }
-    .entry .message {
-      color: #22314a;
-      font-size: 0.98em;
-      margin-bottom: 2px;
-      word-break: break-word;
-    }
-    .entry .date {
-      font-size: 0.85em;
-      color: #8a99b5;
-      text-align: right;
-      margin-top: 4px;
-      font-family: 'Inter', Arial, sans-serif;
+    ::selection {
+      background: #a5b4fc;
+      color: #fff;
     }
     @media (max-width: 900px) {
-      .feedback-sheet {
-        max-width: 90vw;
-        padding: 32px 4vw 28px 4vw;
+      .container-split {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 24px;
+        padding: 12vw 0 6vw 0;
+        min-height: unset;
+      }
+      .entries-panel, .form-panel {
+        max-width: 98vw;
+        min-width: 0;
+        width: 100%;
+        padding: 6vw 4vw;
+        border-radius: 18px;
+        box-shadow: 0 4px 16px 0 rgba(30, 42, 80, 0.10);
+      }
+      .entries-panel {
+        margin-bottom: 0;
+        max-height: unset;
+        min-height: 0;
+      }
+      .form-panel {
+        margin-top: 0;
+      }
+      .form-panel img {
+        height: 44px;
+      }
+      .form-panel h2, .entries-panel h2 {
+        font-size: 1.18em;
+      }
+      .entry {
+        padding: 12px 10px 10px 14px;
+        font-size: 0.98em;
+      }
+      .form-input, .form-textarea {
+        font-size: 1em;
+        padding: 10px 1px;
+      }
+      .submit-btn {
+        font-size: 1em;
+        padding: 12px;
       }
     }
     @media (max-width: 600px) {
-      .feedback-sheet {
-        min-width: 98vw;
-        max-width: 100vw;
-        padding: 16px 2vw 12px 2vw;
-        border-radius: 0;
-        box-shadow: none;
-        border-width: 1px;
+      .container-split {
+        padding: 4vw 0 2vw 0;
+        gap: 14px;
+        margin-left: 7px;
       }
-      .feedback-sheet:before {
-        left: 8px; right: 8px; height: 10px;
-        border-radius: 10px 10px 0 0;
+      .entries-panel, .form-panel {
+        padding: 4vw 2vw;
+        border-radius: 12px;
       }
-      .form-label, .form-input, .form-textarea, .submit-btn {
+      .form-panel img {
+        height: 36px;
+      }
+      .form-panel h2, .entries-panel h2 {
         font-size: 1em;
       }
-      .entries {
-        margin-top: 18px;
-        padding-top: 10px;
+      .entry {
+        padding: 8px 4px 8px 8px;
+        font-size: 0.93em;
+      }
+      .form-input, .form-textarea {
+        font-size: 0.97em;
+        padding: 8px 1px;
+      }
+      .submit-btn {
+        font-size: 0.97em;
+        padding: 10px;
       }
     }
-    @media (max-width: 400px) {
-      .feedback-sheet {
-        padding: 6px 1vw 6px 1vw;
-      }
-    }
-    @media (max-width: 600px) {
-      .feedback-sheet { min-width: 90vw; max-width: 98vw; padding: 20px 4vw; }
+    html, body {
+      /* Prevent horizontal scroll on mobile */
+      max-width: 100vw;
+      overflow-x: hidden;
     }
   </style>
   <!-- Supabase JS CDN -->
@@ -196,49 +334,56 @@
 </head>
 <body>
   <div class="feedback-sheet">
-    <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
-    <h2>Student Feedback Form</h2>
-    <div class="subtitle">We value your feedback! Please share your thoughts and suggestions below.</div>
-    <form autocomplete="off">
-      <div class="form-group">
-        <label class="form-label" for="name">Your Name</label>
-        <input class="form-input" type="text" name="name" id="name" required maxlength="32" />
+    <div class="container-split">
+      <div class="form-panel">
+        <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
+        <h2>Student Feedback Form</h2>
+        <div class="subtitle">We value your feedback! Please share your thoughts and suggestions below.</div>
+        <form autocomplete="off" id="feedback-form">
+          <div class="form-group">
+            <label class="form-label" for="name">Your Name</label>
+            <input class="form-input" type="text" name="name" id="name" required maxlength="32" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="branch">Branch</label>
+            <select class="form-input" name="branch" id="branch" required>
+              <option value="" disabled selected>Select your branch</option>
+              <option value="CSE">CSE</option>
+              <option value="ISE">ISE</option>
+              <option value="ECE">ECE</option>
+              <option value="EEE">EEE</option>
+              <option value="ME">ME</option>
+              <option value="CIV">CIV</option>
+              <option value="AIML">AIML</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sem">Semester</label>
+            <select class="form-input" name="sem" id="sem" required>
+              <option value="" disabled selected>Select your semester</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Your Feedback</label>
+            <textarea class="form-textarea" name="message" id="message" required rows="3" maxlength="200"></textarea>
+          </div>
+          <button class="submit-btn" type="submit">Submit Feedback</button>
+        </form>
       </div>
-      <div class="form-group">
-        <label class="form-label" for="branch">Branch</label>
-        <select class="form-input" name="branch" id="branch" required>
-          <option value="" disabled selected>Select your branch</option>
-          <option value="CSE">CSE</option>
-          <option value="ISE">ISE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="ME">ME</option>
-          <option value="CIV">CIV</option>
-          <option value="AIML">AIML</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="entries-panel">
+        <h2 style="text-align:center;">Recent Feedback</h2>
+        <div class="entries"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label" for="sem">Semester</label>
-        <select class="form-input" name="sem" id="sem" required>
-          <option value="" disabled selected>Select your semester</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="message">Your Feedback</label>
-        <textarea class="form-textarea" name="message" id="message" required rows="3" maxlength="200"></textarea>
-      </div>
-      <button class="submit-btn" type="submit">Submit Feedback</button>
-    </form>
-    <div class="entries"></div>
+    </div>
   </div>
 </body>
 </html>
