@@ -356,6 +356,51 @@
       background: var(--selection-bg);
       color: var(--selection-color);
     }
+    /* Logout Button */
+    .logout-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: var(--form-bg);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 0.95em;
+      cursor: pointer;
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+    }
+    
+    .logout-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--accent-color);
+    }
+    
+    .logout-btn:hover {
+      background-color: rgba(99,102,241,0.1);
+      transform: translateY(-1px);
+    }
+    
+    @media (max-width: 600px) {
+      .logout-btn {
+        top: 12px;
+        left: 12px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+      }
+      
+      .logout-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
     @media (max-width: 900px) {
       .container-split {
         flex-direction: column;
@@ -461,14 +506,23 @@
       max-width: 100vw;
       overflow-x: hidden;
     }
-  </style>
-  <!-- Supabase JS CDN -->  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script type="module" src="./supabaseConfig.js"></script>
+  </style>  <!-- Supabase JS CDN -->  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <script type="module" src="./supabaseConfig.js"></script>
   <script type="module" src="./feedback.js"></script>
+  <script type="module" src="./auth.js"></script>
+  <script type="module" src="./profileManager.js"></script>
+  <script type="module" src="./formInit.js"></script>
   <script src="./theme.js"></script>
 </head>
 <body>
   <div class="feedback-sheet">
+    <button id="logout-btn" class="logout-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      Logout
+    </button>
     <div class="container-split">
       <div class="form-panel">
         <div class="theme-toggle-wrapper">
@@ -491,39 +545,18 @@
         </div>
         <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
         <h2>Student Feedback Form</h2>
-        <div class="subtitle">We value your feedback! Please share your thoughts and suggestions below.</div>
-        <form autocomplete="off" id="feedback-form">
+        <div class="subtitle">We value your feedback! Please share your thoughts and suggestions below.</div>        <form autocomplete="off" id="feedback-form">
           <div class="form-group">
             <label class="form-label" for="name">Your Name</label>
-            <input class="form-input" type="text" name="name" id="name" required maxlength="32" />
+            <input class="form-input" type="text" name="name" id="name" required maxlength="32" readonly />
           </div>
           <div class="form-group">
             <label class="form-label" for="branch">Branch</label>
-            <select class="form-input" name="branch" id="branch" required>
-              <option value="" disabled selected>Select your branch</option>
-              <option value="CSE">CSE</option>
-              <option value="ISE">ISE</option>
-              <option value="ECE">ECE</option>
-              <option value="EEE">EEE</option>
-              <option value="ME">ME</option>
-              <option value="CIV">CIV</option>
-              <option value="AIML">AIML</option>
-              <option value="Other">Other</option>
-            </select>
+            <input class="form-input" type="text" name="branch" id="branch" required readonly />
           </div>
           <div class="form-group">
             <label class="form-label" for="sem">Semester</label>
-            <select class="form-input" name="sem" id="sem" required>
-              <option value="" disabled selected>Select your semester</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-            </select>
+            <input class="form-input" type="text" name="sem" id="sem" required readonly />
           </div>
           <div class="form-group">
             <label class="form-label" for="message">Your Feedback</label>
@@ -531,6 +564,36 @@
           </div>
           <button class="submit-btn" type="submit">Submit Feedback</button>
         </form>
+      <script type="module">
+          // Import the profile manager to handle auto-filling form fields
+          import { autoFillFormFields } from './profileManager.js';
+          
+          // Fill user data using the profile manager
+          document.addEventListener('DOMContentLoaded', async () => {
+            const filled = await autoFillFormFields();
+            
+            if (!filled) {
+              console.warn('Could not auto-fill form fields - no profile data available');
+              
+              // Show a message to the user if needed
+              const statusElement = document.createElement('div');
+              statusElement.id = 'profile-warning';
+              statusElement.textContent = 'Please complete your profile information';
+              statusElement.style.background = '#fff3cd';
+              statusElement.style.color = '#856404';
+              statusElement.style.padding = '10px';
+              statusElement.style.marginBottom = '15px';
+              statusElement.style.borderRadius = '5px';
+              statusElement.style.textAlign = 'center';
+              
+              const formPanel = document.querySelector('.form-panel');
+              const feedbackForm = document.getElementById('feedback-form');
+              if (formPanel && feedbackForm) {
+                formPanel.insertBefore(statusElement, feedbackForm);
+              }
+            }
+          });
+        </script>
       </div>
       <div class="entries-panel">
         <h2 style="text-align:center;">Recent Feedback</h2>
@@ -538,5 +601,85 @@
       </div>
     </div>
   </div>
+    <script type="module">
+    import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
+    import { fetchAndDisplayEntries } from './feedback.js';
+    
+    // Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      // If not logged in, redirect to login page
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Make sure we load the feedback entries
+      fetchAndDisplayEntries();
+      
+      // Check if user has profile data
+      const userData = session.user.user_metadata;
+      
+      // Function to show status messages
+      const showStatus = (message, isError) => {
+        let statusElement = document.getElementById('form-status');
+        if (!statusElement) {
+          statusElement = document.createElement('div');
+          statusElement.id = 'form-status';
+          document.querySelector('.form-panel').insertBefore(
+            statusElement, 
+            document.getElementById('feedback-form')
+          );
+        }
+        statusElement.textContent = message;
+        statusElement.style.display = 'block';
+        statusElement.style.padding = '10px';
+        statusElement.style.marginBottom = '15px';
+        statusElement.style.borderRadius = '5px';
+        
+        if (isError) {
+          statusElement.style.background = '#ffeaea';
+          statusElement.style.color = '#b91c1c';
+        } else {
+          statusElement.style.background = '#e6f9ea';
+          statusElement.style.color = '#217a3c';
+        }
+      };
+      
+      // If user metadata is missing, try to fetch from database
+      if (!userData || !userData.name || !userData.branch || !userData.semester) {
+        // Show loading message
+        showStatus("Loading your profile information...", false);
+        
+        // Fetch user profile from database
+        const { data: userProfile, error } = await supabase
+          .from('student_profiles')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (userProfile && !error) {
+          // Update user metadata with profile data
+          await supabase.auth.updateUser({
+            data: {
+              name: userProfile.name,
+              branch: userProfile.branch,
+              semester: userProfile.semester,
+              usn: userProfile.usn
+            }
+          });
+          
+          // Hide the status message after successful data fetch
+          document.getElementById('form-status').style.display = 'none';
+        } else {
+          // No profile data found
+          showStatus("Please complete your profile information. If you just registered, please wait a moment while your profile is being set up.", true);
+        }
+      }
+    });
+  </script>
 </body>
 </html>

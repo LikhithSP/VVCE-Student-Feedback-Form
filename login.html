@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Student Feedback Form</title>
+  <link rel="icon" type="image/png" href="vvce-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Modern Split Layout */
+    :root {
+      --bg-gradient: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+      --card-bg: rgba(243, 247, 248, 0.97);
+      --form-bg: rgba(243, 247, 248, 0.97);
+      --text-color: #22314a;
+      --text-color-light: #3b4a6b;
+      --text-muted: #888;
+      --input-bg: #f7fafc;
+      --input-border: #e0e4ed;
+      --accent-color: #ce8c36;
+      --entry-gradient: linear-gradient(100deg, #f0fdfa 0%, #e0e7ff 100%);
+      --card-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13), 0 1.5px 8px 0 #a5b4fc33;
+      --logo-filter: drop-shadow(0 2px 8px #6366f122);
+      --selection-bg: #a5b4fc;
+      --selection-color: #fff;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(120deg, #1e293b 0%, #0f172a 100%);
+      --card-bg: rgba(26, 40, 66, 0.95);
+      --form-bg: rgba(26, 40, 66, 0.95);
+      --text-color: #e2e8f0;
+      --text-color-light: #cbd5e1;
+      --text-muted: #ccd1da;
+      --input-bg: #1e2a3d;
+      --input-border: #334155;
+      --accent-color: #c56220;
+      --entry-gradient: linear-gradient(100deg, #1e293b 0%, #334155 100%);
+      --card-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.3), 0 1.5px 8px 0 rgba(129, 140, 248, 0.2);
+      --logo-filter: drop-shadow(0 2px 8px rgba(129, 140, 248, 0.2)) brightness(0.95);
+      --selection-bg: #818cf8;
+      --selection-color: #f8fafc;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg-gradient);
+      overflow-x: hidden;
+      transition: background 0.3s ease;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      background: url("./vvceofficial_cover.jpg") no-repeat center center fixed;
+      background-size: cover;
+      filter: saturate(1) blur(2px) brightness(0.8);
+      opacity: 0.9;
+      animation: bgfadein 1.5s cubic-bezier(.4,0,.2,1);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    [data-theme="dark"] body::before {
+      background: url("./ams6qoba6gtcqufegcsl.png") no-repeat center center fixed;
+      background-size: cover;
+      filter: saturate(2.5) sharp(1.5) brightness(0.5);
+      opacity: 0.8;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-wrapper {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 10;
+    }
+    
+    #theme-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      transition: background-color 0.2s;
+      background-color: var(--form-bg);
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.1);
+    }
+    
+    #theme-toggle:hover {
+      background-color: rgba(99,102,241,0.1);
+    }
+
+    #theme-toggle.theme-toggle-clicked {
+      animation: pulse 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    
+    #theme-toggle svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-color);
+      transition: opacity 0.2s, transform 0.4s ease;
+    }
+    
+    .sun-icon {
+      opacity: 0;
+      position: absolute;
+      transform: scale(0.5) rotate(-45deg);
+    }
+    
+    .moon-icon {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    
+    [data-theme="dark"] .sun-icon {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    
+    [data-theme="dark"] .moon-icon {
+      opacity: 0;
+      transform: scale(0.5) rotate(45deg);
+    }
+    
+    @keyframes bgfadein {
+      from { opacity: 0; }
+      to { opacity: 0.7; }
+    }
+
+    .login-panel {
+      background: var(--form-bg);
+      border-radius: 28px;
+      box-shadow: var(--card-shadow);
+      padding: 54px 38px 38px 38px;
+      min-width: 340px;
+      max-width: 480px;
+      width: 100%;
+      border: 1.5px solid var(--input-border);
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-panel img {
+      margin-bottom: 12px;
+      filter: var(--logo-filter);
+      animation: logo-bounce 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    @keyframes logo-bounce {
+      0% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+      60% { transform: scale(1.1) translateY(8px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .login-panel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      color: var(--text-color);
+      letter-spacing: 0.5px;
+      font-weight: 800;
+      text-align: center;
+      text-shadow: 0 2px 8px #a5b4fc22;
+    }
+
+    .login-panel .subtitle {
+      text-align: center;
+      margin-bottom: 28px;
+      color: var(--text-color-light);
+      font-size: 1.08em;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--text-color-light);
+      font-size: 1.08em;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--input-border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1.08em;
+      font-family: 'Inter', Arial, sans-serif;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+      box-shadow: none;
+      font-weight: 500;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      border: 1.5px solid var(--accent-color);
+      background: var(--form-bg);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--accent-color) 0%, #2563eb 100%);
+      color: #fff;
+      font-size: 1.13em;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .login-btn:hover {
+      background: linear-gradient(90deg, #2563eb 0%, var(--accent-color) 100%);
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 4px 16px 0 rgba(99,102,241,0.3);
+    }
+
+    #login-status {
+      margin-bottom: 18px;
+      text-align: center;
+      border-radius: 7px;
+      font-weight: 700;
+      font-size: 1.08em;
+      letter-spacing: 0.1px;
+      box-shadow: 0 2px 8px 0 #6366f122;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+      padding: 12px;
+    }
+
+    .success { 
+      background-color: rgba(52, 211, 153, 0.2); 
+      color: #059669;
+    }
+    
+    .error { 
+      background-color: rgba(248, 113, 113, 0.2); 
+      color: #DC2626;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-color-light);
+      font-size: 1em;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .register-link a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .register-link a:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    ::selection {
+      background: var(--selection-bg);
+      color: var(--selection-color);
+    }
+
+    @media (max-width: 600px) {
+      .login-panel {
+        padding: 36px 24px;
+        border-radius: 16px;
+        max-width: 92%;
+      }
+
+      .login-panel img {
+        height: 40px;
+      }
+
+      .login-panel h2 {
+        font-size: 1.3em;
+      }
+
+      .form-input {
+        font-size: 1em;
+        padding: 12px 14px;
+      }
+
+      .login-btn {
+        font-size: 1em;
+        padding: 12px;
+      }
+
+      .theme-toggle-wrapper {
+        top: 12px;
+        right: 12px;
+      }
+      
+      #theme-toggle {
+        width: 36px;
+        height: 36px;
+      }
+      
+      #theme-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    html, body {
+      /* Prevent horizontal scroll on mobile */
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+  </style>  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="./supabaseConfig.js"></script>
+  <script type="module" src="./auth.js"></script>
+  <script src="./theme.js"></script>
+</head>
+<body>
+  <div class="login-panel">
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
+    <h2>Student Login</h2>
+    <div class="subtitle">Log in to access the student feedback portal</div>
+    
+    <!-- Status message will be displayed here -->
+    <div id="login-status" style="display: none;"></div>
+    
+    <form autocomplete="off" id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="usn">USN (University Seat Number)</label>
+        <input class="form-input" type="text" name="usn" id="usn" required placeholder="Enter your USN" maxlength="10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" type="password" name="password" id="password" required placeholder="Enter your password" />
+      </div>
+      <button class="login-btn" type="submit">Login</button>
+    </form>
+    
+    <div class="register-link">
+      New student? <a href="register.html">Register here</a>
+    </div>
+  </div>
+</body>
+</html>

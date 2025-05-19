@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Student Feedback Form</title>
+  <link rel="icon" type="image/png" href="vvce-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Modern Split Layout */
+    :root {
+      --bg-gradient: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+      --card-bg: rgba(243, 247, 248, 0.97);
+      --form-bg: rgba(243, 247, 248, 0.97);
+      --text-color: #22314a;
+      --text-color-light: #3b4a6b;
+      --text-muted: #888;
+      --input-bg: #f7fafc;
+      --input-border: #e0e4ed;
+      --accent-color: #ce8c36;
+      --entry-gradient: linear-gradient(100deg, #f0fdfa 0%, #e0e7ff 100%);
+      --card-shadow: 0 8px 32px 0 rgba(30, 42, 80, 0.13), 0 1.5px 8px 0 #a5b4fc33;
+      --logo-filter: drop-shadow(0 2px 8px #6366f122);
+      --selection-bg: #a5b4fc;
+      --selection-color: #fff;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(120deg, #1e293b 0%, #0f172a 100%);
+      --card-bg: rgba(26, 40, 66, 0.95);
+      --form-bg: rgba(26, 40, 66, 0.95);
+      --text-color: #e2e8f0;
+      --text-color-light: #cbd5e1;
+      --text-muted: #ccd1da;
+      --input-bg: #1e2a3d;
+      --input-border: #334155;
+      --accent-color: #c56220;
+      --entry-gradient: linear-gradient(100deg, #1e293b 0%, #334155 100%);
+      --card-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.3), 0 1.5px 8px 0 rgba(129, 140, 248, 0.2);
+      --logo-filter: drop-shadow(0 2px 8px rgba(129, 140, 248, 0.2)) brightness(0.95);
+      --selection-bg: #818cf8;
+      --selection-color: #f8fafc;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg-gradient);
+      overflow-x: hidden;
+      transition: background 0.3s ease;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      background: url("./vvceofficial_cover.jpg") no-repeat center center fixed;
+      background-size: cover;
+      filter: saturate(1) blur(2px) brightness(0.8);
+      opacity: 0.9;
+      animation: bgfadein 1.5s cubic-bezier(.4,0,.2,1);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    [data-theme="dark"] body::before {
+      background: url("./ams6qoba6gtcqufegcsl.png") no-repeat center center fixed;
+      background-size: cover;
+      filter: saturate(2.5) sharp(1.5) brightness(0.5);
+      opacity: 0.8;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-wrapper {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 10;
+    }
+    
+    #theme-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      transition: background-color 0.2s;
+      background-color: var(--form-bg);
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.1);
+    }
+    
+    #theme-toggle:hover {
+      background-color: rgba(99,102,241,0.1);
+    }
+
+    #theme-toggle.theme-toggle-clicked {
+      animation: pulse 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    
+    #theme-toggle svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-color);
+      transition: opacity 0.2s, transform 0.4s ease;
+    }
+    
+    .sun-icon {
+      opacity: 0;
+      position: absolute;
+      transform: scale(0.5) rotate(-45deg);
+    }
+    
+    .moon-icon {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    
+    [data-theme="dark"] .sun-icon {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    
+    [data-theme="dark"] .moon-icon {
+      opacity: 0;
+      transform: scale(0.5) rotate(45deg);
+    }
+    
+    @keyframes bgfadein {
+      from { opacity: 0; }
+      to { opacity: 0.7; }
+    }
+
+    .register-panel {
+      background: var(--form-bg);
+      border-radius: 28px;
+      box-shadow: var(--card-shadow);
+      padding: 54px 38px 38px 38px;
+      min-width: 340px;
+      max-width: 480px;
+      width: 100%;
+      border: 1.5px solid var(--input-border);
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-panel img {
+      margin-bottom: 12px;
+      filter: var(--logo-filter);
+      animation: logo-bounce 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    @keyframes logo-bounce {
+      0% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+      60% { transform: scale(1.1) translateY(8px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .register-panel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      color: var(--text-color);
+      letter-spacing: 0.5px;
+      font-weight: 800;
+      text-align: center;
+      text-shadow: 0 2px 8px #a5b4fc22;
+    }
+
+    .register-panel .subtitle {
+      text-align: center;
+      margin-bottom: 28px;
+      color: var(--text-color-light);
+      font-size: 1.08em;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .form-group.inline {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-group.inline > div {
+      flex: 1;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--text-color-light);
+      font-size: 1.08em;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--input-border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1.08em;
+      font-family: 'Inter', Arial, sans-serif;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+      box-shadow: none;
+      font-weight: 500;
+      box-sizing: border-box;
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b4a6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-position: right 16px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 45px;
+    }
+
+    [data-theme="dark"] .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    .form-input:focus, .form-select:focus {
+      border: 1.5px solid var(--accent-color);
+      background: var(--form-bg);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--accent-color) 0%, #2563eb 100%);
+      color: #fff;
+      font-size: 1.13em;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .register-btn:hover {
+      background: linear-gradient(90deg, #2563eb 0%, var(--accent-color) 100%);
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 4px 16px 0 rgba(99,102,241,0.3);
+    }
+
+    #register-status {
+      margin-bottom: 18px;
+      text-align: center;
+      border-radius: 7px;
+      font-weight: 700;
+      font-size: 1.08em;
+      letter-spacing: 0.1px;
+      box-shadow: 0 2px 8px 0 #6366f122;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+      padding: 12px;
+    }
+
+    .success { 
+      background-color: rgba(52, 211, 153, 0.2); 
+      color: #059669;
+    }
+    
+    .error { 
+      background-color: rgba(248, 113, 113, 0.2); 
+      color: #DC2626;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-color-light);
+      font-size: 1em;
+      animation: fadein 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .login-link a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .login-link a:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    ::selection {
+      background: var(--selection-bg);
+      color: var(--selection-color);
+    }
+
+    @media (max-width: 600px) {
+      .register-panel {
+        padding: 36px 24px;
+        border-radius: 16px;
+        max-width: 92%;
+      }
+
+      .register-panel img {
+        height: 40px;
+      }
+
+      .register-panel h2 {
+        font-size: 1.3em;
+      }
+
+      .form-input, .form-select {
+        font-size: 1em;
+        padding: 12px 14px;
+      }
+
+      .register-btn {
+        font-size: 1em;
+        padding: 12px;
+      }
+
+      .form-group.inline {
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .theme-toggle-wrapper {
+        top: 12px;
+        right: 12px;
+      }
+      
+      #theme-toggle {
+        width: 36px;
+        height: 36px;
+      }
+      
+      #theme-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    html, body {
+      /* Prevent horizontal scroll on mobile */
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+  </style>  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="./supabaseConfig.js"></script>
+  <script type="module" src="./auth.js"></script>
+  <script src="./theme.js"></script>
+</head>
+<body>
+  <div class="register-panel">
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <img src="vvce-logo.png" alt="VVCE Logo" style="height: 60px; display: block; margin: 0 auto 8px auto;" />
+    <h2>Student Registration</h2>
+    <div class="subtitle">Create an account to access the feedback portal</div>
+    
+    <!-- Status message will be displayed here -->
+    <div id="register-status" style="display: none;"></div>
+    
+    <form autocomplete="off" id="register-form">
+      <div class="form-group">
+        <label class="form-label" for="usn">USN (University Seat Number)</label>
+        <input class="form-input" type="text" name="usn" id="usn" required placeholder="Enter your USN" maxlength="10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input class="form-input" type="text" name="name" id="name" required placeholder="Enter your full name" maxlength="50" />
+      </div>
+      <div class="form-group inline">
+        <div>
+          <label class="form-label" for="branch">Branch</label>
+          <select class="form-select" name="branch" id="branch" required>
+            <option value="" disabled selected>Select branch</option>
+            <option value="CSE">CSE</option>
+            <option value="ISE">ISE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="ME">ME</option>
+            <option value="CIV">CIV</option>
+            <option value="AIML">AIML</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="sem">Semester</label>
+          <select class="form-select" name="sem" id="sem" required>
+            <option value="" disabled selected>Select semester</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" type="password" name="password" id="password" required placeholder="Create a password" minlength="6" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="confirm_password">Confirm Password</label>
+        <input class="form-input" type="password" name="confirm_password" id="confirm_password" required placeholder="Confirm your password" minlength="6" />
+      </div>
+      <button class="register-btn" type="submit">Register</button>
+    </form>
+    
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>  <script type="module">
+    import { isValidUSN } from './auth.js';
+    import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
+    
+    // Make sure supabase is defined in this scope
+    let supabase;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize the Supabase client
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log('Supabase initialized:', supabase);
+      
+      const registerForm = document.getElementById('register-form');
+      const registerStatus = document.getElementById('register-status');
+      
+      if (registerForm) {
+        registerForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          
+          // Clear previous status
+          registerStatus.style.display = 'none';
+          registerStatus.textContent = '';
+          
+          const usn = registerForm.usn.value.trim().toUpperCase();
+          const name = registerForm.name.value.trim();
+          const branch = registerForm.branch.value;
+          const sem = registerForm.sem.value;
+          const password = registerForm.password.value;
+          const confirmPassword = registerForm.confirm_password.value;
+            // Basic validation with specific error messages
+          if (!usn) {
+            showStatus('Please enter your USN.', false);
+            return;
+          }
+          if (!name) {
+            showStatus('Please enter your full name.', false);
+            return;
+          }
+          if (!branch) {
+            showStatus('Please select your branch.', false);
+            return;
+          }
+          if (!sem) {
+            showStatus('Please select your semester.', false);
+            return;
+          }
+          if (!password) {
+            showStatus('Please create a password.', false);
+            return;
+          }
+          if (!confirmPassword) {
+            showStatus('Please confirm your password.', false);
+            return;
+          }
+          
+          // Validate USN format
+          if (!isValidUSN(usn)) {
+            showStatus('Please enter a valid VVCE USN (e.g., 4VV19CS001)', false);
+            console.log('Invalid USN format:', usn);
+            return;
+          }
+          
+          // Password match validation
+          if (password !== confirmPassword) {
+            showStatus('Passwords do not match.', false);
+            return;
+          }
+            // Password length validation
+          if (password.length < 6) {
+            showStatus('Password must be at least 6 characters.', false);
+            return;
+          }
+          
+          // Email format for Supabase Auth (using correct VVCE format: vvce23cse0233@vvce.ac.in)
+          // Extract year, branch code, and number from USN
+          let email = '';
+          
+          // Extract components from USN (e.g., 4VV23CS115)
+          const yearMatch = usn.match(/4VV(\d{2})([A-Z]{2})(\d{3})/);
+          if (yearMatch) {
+            const year = yearMatch[1];
+            let dept = yearMatch[2].toLowerCase();
+            const number = yearMatch[3].padStart(4, '0');
+            
+            // Map department codes to their email format equivalents
+            if (dept === 'cs') dept = 'cse';
+            else if (dept === 'is') dept = 'ise';
+            else if (dept === 'ec') dept = 'ece';
+            else if (dept === 'ee') dept = 'eee';
+            
+            // Create the email in format: vvce23cse0233@vvce.ac.in
+            email = `vvce${year}${dept}${number}@vvce.ac.in`;
+          } else {
+            // Fallback if USN format doesn't match expected pattern
+            email = `${usn.toLowerCase()}@vvce.ac.in`;
+          }
+          
+          console.log('Generated email:', email);          try {
+            // Show registration is in progress
+            showStatus('Registering account...', true);
+            console.log('Attempting to register user:', { email, usn, name, branch, semester: sem });
+            
+            // Check if Supabase is initialized
+            if (!supabase || !supabase.auth) {
+              throw new Error('Supabase client not properly initialized');
+            }
+            
+            // Check if the account already exists
+            const { data: existingUser, error: checkError } = await supabase.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+            
+            if (!checkError && existingUser) {
+              console.log('User already exists, redirecting to login');
+              showStatus('Account already exists. Please login.', true);
+              setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+              return;
+            }
+            
+            console.log('Supabase auth object:', supabase.auth);
+            
+            // Create user in Supabase Auth
+            console.log('Calling supabase.auth.signUp...');
+            const signUpResult = await supabase.auth.signUp({
+              email: email,
+              password: password,
+              options: {
+                data: {
+                  usn: usn,
+                  name: name,
+                  branch: branch,
+                  semester: sem
+                }
+              }
+            });
+            
+            console.log('SignUp result:', signUpResult);
+            
+            const { data: authData, error: authError } = signUpResult;
+              if (authError) {
+              console.error('Auth error:', authError);
+              throw authError;
+            }
+            
+            if (!authData || !authData.user) {
+              console.error('No user data returned:', authData);
+              throw new Error('Registration failed: No user data returned from Supabase');
+            }
+            
+            console.log('User created successfully:', authData.user);
+              try {
+              // Create user profile in database
+              console.log('Creating user profile...');
+                // Check if profile already exists for this user to prevent duplicates
+              const { data: existingProfile } = await supabase
+                .from('student_profiles')
+                .select('id')
+                .eq('user_id', authData.user.id)
+                .single();
+                
+              if (existingProfile) {
+                console.log('Profile already exists, skipping creation');
+                showStatus('Registration successful! Please login.', true);
+                setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                return;
+              }
+              
+              // First try to sign in with the new credentials to get a valid session
+              const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+              });
+              
+              console.log('Sign-in result:', signInData);
+              
+              if (signInError) {
+                console.warn('Could not sign in after registration:', signInError);
+                // Continue without sign-in, but this might cause RLS issues
+              }
+                // Get the current session after sign-in to ensure we have latest user ID
+              const { data: { session } } = await supabase.auth.getSession();
+              const userId = session?.user?.id || authData.user.id;
+              
+              console.log('Using user ID for profile creation:', userId);
+              
+              // Now insert the profile record
+              const profileResult = await supabase
+                .from('student_profiles')
+                .insert([
+                  { 
+                    usn: usn, 
+                    name: name, 
+                    branch: branch, 
+                    semester: parseInt(sem, 10), // Ensure semester is stored as a number
+                    user_id: userId
+                  }
+                ]);
+                
+              console.log('Profile creation result:', profileResult);
+                if (profileResult.error) {
+                console.error('Profile error:', profileResult.error);
+                
+                // Check for specific error types and handle accordingly
+                if (profileResult.error.message.includes('foreign key constraint')) {
+                  console.log('Foreign key constraint error detected. User ID might not be available yet.');
+                  
+                  // Wait a short time and try again - sometimes there's a delay in user creation
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                  
+                  // Try one more time with the auth data user ID
+                  const retryResult = await supabase
+                    .from('student_profiles')
+                    .insert([
+                      { 
+                        usn: usn, 
+                        name: name, 
+                        branch: branch, 
+                        semester: parseInt(sem, 10),
+                        user_id: authData.user.id
+                      }
+                    ]);
+                    
+                  if (retryResult.error) {
+                    console.error('Retry also failed:', retryResult.error);
+                    // Fall back to just metadata
+                  } else {
+                    console.log('Retry succeeded!');
+                    showStatus('Registration successful! Please login.', true);
+                    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                    return;
+                  }
+                }
+                
+                // If we get here, try updating user metadata as a fallback
+                console.log('Updating user metadata as fallback');
+                
+                const { data: updateData, error: updateError } = await supabase.auth.updateUser({
+                  data: {
+                    usn: usn,
+                    name: name, 
+                    branch: branch,
+                    semester: parseInt(sem, 10)
+                  }
+                });
+                
+                if (updateError) {
+                  console.error('User metadata update failed:', updateError);
+                  throw updateError;
+                }
+                
+                console.log('User metadata updated successfully:', updateData);
+              }
+              
+              showStatus('Registration successful! Please login.', true);
+              
+              // Redirect to login page after a short delay
+              setTimeout(() => {
+                window.location.href = 'login.html';
+              }, 2000);
+            } catch (profileError) {
+              console.error('Profile creation error:', profileError);
+              throw new Error(`User created but profile failed: ${profileError.message}`);
+            }
+              } catch (error) {
+            console.error('Registration error:', error);
+            showStatus(`Registration failed: ${error.message || 'Unknown error occurred'}`, false);
+          }
+        });
+      }
+    });
+    
+    function showStatus(message, isSuccess) {
+      const statusElement = document.getElementById('register-status');
+      if (statusElement) {
+        statusElement.textContent = message;
+        statusElement.style.display = 'block';
+        
+        statusElement.classList.remove('success', 'error');
+        statusElement.classList.add(isSuccess ? 'success' : 'error');
+      }
+    }
+  </script>
+</body>
+</html>
