@@ -69,7 +69,7 @@ IMP : Make sure you use 4VV23CS"your-clg-email-no" for the USN
 ## FAQ
 
 **Q: Who can register?**  
-A: Only students with a valid VVCE USN (e.g., `4VV23CS115`).
+A: Only students with a valid VVCE USN (e.g., `4VV23CS233`).
 
 **Q: What if my feedback doesn't show up?**  
 A: Make sure you are logged in. If you see errors, try logging out and back in, or contact the admin.
