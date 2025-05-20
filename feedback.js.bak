@@ -5,21 +5,25 @@
 
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
 import { fetchUserProfile } from './profileManager.js';
+import { logInfo, logWarning, logError, logSuccess } from './logger.js';
 
 // Initialize Supabase client
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Log initialization
+logInfo('Feedback module initialized');
+
 // Handle form submission
 export async function handleFormSubmit(event) {
   event.preventDefault();
-  console.log('Form submission started');
+  logInfo('Form submission started');
   
   const form = event.target;
   const message = form.message.value.trim();
 
   if (!message) {
     showStatus('Please enter your feedback message.', false);
-    console.warn('Submission stopped: Empty message');
+    logWarning('Submission stopped: Empty message');
     return;
   }
   
@@ -32,7 +36,7 @@ export async function handleFormSubmit(event) {
     
     if (!session) {
       showStatus('You must be logged in to submit feedback.', false);
-      console.error('No active session');
+      logError('No active session');
       setTimeout(() => { window.location.href = 'login.html'; }, 2000);
       return;
     }
@@ -40,60 +44,62 @@ export async function handleFormSubmit(event) {
     // Get user profile data from metadata or form
     const userData = session.user.user_metadata || {};
     
-    // Get data from form fields (these should be auto-filled)
-    let name = form.name.value.trim() || userData.name;
-    let branch = form.branch.value.trim() || userData.branch;
-    let sem = form.sem.value.trim() || userData.semester;
+    // First try to get data from form fields (these should be auto-filled)
+    const name = form.name.value.trim() || userData.name;
+    const branch = form.branch.value.trim() || userData.branch;
+    const sem = form.sem.value.trim() || userData.semester;
     
-    // If data is missing, try to get from profile manager
+    // Verify we have all required data
     if (!name || !branch || !sem) {
-      const profile = await fetchUserProfile();
-      if (profile) {
-        name = profile.name || name;
-        branch = profile.branch || branch;
-        sem = profile.semester || sem;
+      logWarning('Missing profile data', { name, branch, sem });
+      
+      // Try to fetch profile directly as fallback
+      const { data: profileData } = await supabase
+        .from('student_profiles')
+        .select('name, branch, semester')
+        .eq('user_id', session.user.id)
+        .single();
+      
+      if (profileData) {
+        logInfo('Retrieved profile data from database');
+      } else {
+        showStatus('Missing profile information. Please complete your profile.', false);
+        return;
       }
     }
-    
-    // Final check for required data
-    if (!name || !branch || !sem) {
-      showStatus('Missing profile information. Please complete your profile.', false);
-      console.warn('Missing profile data', { name, branch, sem });
-      return;
-    }
-    
-    // Submit the feedback with all necessary data
-    console.log('Submitting feedback with:', { 
+  // Get the session to ensure we have the correct user ID
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    showStatus('Your session has expired. Please log in again.', false);
+    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+    return;
+  }
+  
+  // Submit the feedback with all necessary data
+  console.log('Submitting feedback with:', { 
+    name, 
+    branch, 
+    sem, 
+    message, 
+    user_id: session.user.id  // Use direct session user ID
+  });
+  
+  const { error } = await supabase.from('student_feedback').insert([
+    { 
       name, 
       branch, 
-      sem, 
-      message, 
-      user_id: session.user.id
-    });
-    
-    const { error } = await supabase.from('student_feedback').insert([
-      { name, branch, sem, message, user_id: session.user.id }
-    ]);
-
-    if (error) {
-      console.error('Error submitting feedback:', error);
-      showStatus('Error submitting feedback: ' + error.message, false);
-    } else {
-      console.log('Feedback submitted successfully!');
-      showStatus('Feedback submitted! Thank you for your response.', true);
-      form.reset();
-      // Re-fill the form with user data
-      if (userData) {
-        form.name.value = userData.name || '';
-        form.branch.value = userData.branch || '';
-        form.sem.value = userData.semester || '';
-      }
-      // Refresh the entries display
-      fetchAndDisplayEntries();
+      sem: parseInt(sem) || 1, // Ensure semester is a number
+      message,
+      user_id: session.user.id // Use direct session user ID
     }
-  } catch (err) {
-    console.error('Error in form submission:', err);
-    showStatus('An unexpected error occurred. Please try again.', false);
+  ]);
+
+  if (error) {
+    showStatus('Error submitting feedback. Please try again.', false);
+  } else {
+    showStatus('Feedback submitted! Thank you for your response.', true);
+    form.reset();
+    fetchAndDisplayEntries();
   }
 }
 
@@ -101,22 +107,28 @@ export async function handleFormSubmit(event) {
 export async function fetchAndDisplayEntries() {
   const entriesDiv = document.querySelector('.entries');
   if (!entriesDiv) {
-    console.error('Could not find entries div');
+    logError('Could not find entries div');
     return;
   }
   
-  console.log('Fetching feedback entries...');
+  logInfo('Fetching feedback entries...');
   
   try {
+    // First ensure we have an active session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      logWarning('No active session when trying to fetch entries');
+    }
+    
     // Try to fetch all feedback entries
     const { data, error } = await supabase
       .from('student_feedback')
-      .select('name, branch, sem, message, created_at')
+      .select('*') // Select all columns
       .order('created_at', { ascending: false })
       .limit(30);
   
     if (error) {
-      console.error('Error fetching entries:', error);
+      logError('Error fetching entries:', error);
       entriesDiv.innerHTML = `
         <div style="color:red;text-align:center;padding:20px;">
           Error loading feedback entries: ${error.message}
@@ -128,7 +140,7 @@ export async function fetchAndDisplayEntries() {
       return;
     }
   
-    console.log('Fetched entries:', data);
+    logSuccess('Fetched entries:', data);
     
     if (!data || data.length === 0) {
       entriesDiv.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:20px;">No feedback entries yet.</div>';
@@ -137,15 +149,15 @@ export async function fetchAndDisplayEntries() {
   
     entriesDiv.innerHTML = data.map(entry => `
       <div class="entry">
-        <div class="name">${escapeHtml(entry.name)} <span style="font-weight:400;color:#555;font-size:0.95em;">(${escapeHtml(entry.branch)}, Sem ${escapeHtml(entry.sem)})</span></div>
+        <div class="name">${escapeHtml(entry.name)} <span style="font-weight:400;color:var(--text-muted);font-size:0.95em;">(${escapeHtml(entry.branch)}, Sem ${escapeHtml(entry.sem)})</span></div>
         <div class="message">${escapeHtml(entry.message)}</div>
         <div class="date">${formatDate(entry.created_at)}</div>
       </div>
     `).join('');
     
-    console.log('Entries rendered successfully');
+    logInfo('Entries rendered successfully');
   } catch (err) {
-    console.error('Failed to fetch entries:', err);
+    logError('Failed to fetch entries:', err);
     entriesDiv.innerHTML = `
       <div style="color:red;text-align:center;padding:20px;">
         Failed to load feedback entries. Please try again later.
@@ -184,8 +196,7 @@ function showStatus(message, success) {
 }
 
 function escapeHtml(text) {
-  if (text === null || text === undefined) return '';
-  return String(text).replace(/[&<>"]/g, function(m) {
+  return text.replace(/[&<>"]/g, function(m) {
     return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]);
   });
 }

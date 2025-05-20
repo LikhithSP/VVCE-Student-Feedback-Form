@@ -1,0 +1,170 @@
+// filepath: c:\Users\Cutie\Documents\GitHub\VVCE-Student-Feedback-Form\test-supabase.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Connection Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .result {
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Supabase Connection Test</h1>
+  <p>This page tests your connection to Supabase and basic functionality.</p>
+  
+  <div>
+    <button id="test-connection">Test Connection</button>
+    <button id="test-tables">Check Tables</button>
+  </div>
+  
+  <div id="results"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
+    
+    // Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    function addResult(message, isSuccess, details = null) {
+      const resultsDiv = document.getElementById('results');
+      const resultDiv = document.createElement('div');
+      resultDiv.className = `result ${isSuccess ? 'success' : 'error'}`;
+      
+      const messageP = document.createElement('p');
+      messageP.textContent = message;
+      resultDiv.appendChild(messageP);
+      
+      if (details) {
+        const detailsPre = document.createElement('pre');
+        detailsPre.textContent = typeof details === 'string' ? details : JSON.stringify(details, null, 2);
+        resultDiv.appendChild(detailsPre);
+      }
+      
+      resultsDiv.prepend(resultDiv);
+    }
+    
+    // Test basic connection
+    document.getElementById('test-connection').addEventListener('click', async () => {
+      try {
+        addResult('Testing Supabase connection...', true);
+        
+        // Check Supabase initialization
+        if (!supabase || !supabase.auth) {
+          throw new Error('Supabase client not properly initialized');
+        }
+        
+        // Test connection with a simple query
+        const { data, error } = await supabase.from('student_profiles').select('count()', { count: 'exact', head: true });
+        
+        if (error) throw error;
+        
+        addResult('✅ Connection successful!', true, {
+          url: SUPABASE_URL,
+          supabase: 'Initialized correctly',
+          auth: 'Available',
+          queryResult: data
+        });
+      } catch (error) {
+        addResult('❌ Connection failed!', false, {
+          error: error.message,
+          stack: error.stack,
+          supabaseUrl: SUPABASE_URL,
+          supabaseKey: SUPABASE_ANON_KEY ? 'Provided (not shown for security)' : 'Missing'
+        });
+      }
+    });
+    
+    // Test database schema
+    document.getElementById('test-tables').addEventListener('click', async () => {
+      try {
+        addResult('Checking database tables...', true);
+        
+        // Check student_profiles table
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('student_profiles')
+          .select('*')
+          .limit(1);
+          
+        if (profilesError) throw new Error(`student_profiles table error: ${profilesError.message}`);
+        
+        // Check student_feedback table
+        const { data: feedbackData, error: feedbackError } = await supabase
+          .from('student_feedback')
+          .select('*')
+          .limit(1);
+          
+        if (feedbackError) throw new Error(`student_feedback table error: ${feedbackError.message}`);
+        
+        // Test registration (without actually creating a user)
+        const testEmail = `test_${Date.now()}@example.com`;
+        const { error: authError } = await supabase.auth.signUp({
+          email: testEmail,
+          password: 'password123',
+          options: { 
+            data: { test: true },
+            emailRedirectTo: window.location.origin
+          }
+        }, { redirectTo: null });
+        
+        if (authError && !authError.message.includes('User already registered')) {
+          throw new Error(`Auth test error: ${authError.message}`);
+        }
+        
+        addResult('✅ Database tables check successful!', true, {
+          student_profiles: profilesData ? 'Table exists' : 'Table exists (empty)',
+          student_feedback: feedbackData ? 'Table exists' : 'Table exists (empty)',
+          auth_test: 'Working correctly'
+        });
+      } catch (error) {
+        addResult('❌ Database tables check failed!', false, {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+    });
+  </script>
+</body>
+</html>
