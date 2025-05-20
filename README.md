@@ -3,7 +3,7 @@
 <img src="./demo-login.png">
 <img src="./demo-layout.png">
 
-<p align="center"><strong>A modern web app for collecting student feedback at VVCE [Students Only], with secure authentication and auto-filled forms using Supabase as the backend.</strong></p>
+<p align="center"><strong>A modern web app for collecting student feedback at VVCE [Students Only], with secure authentication and auto-filled forms using Supabase as the backend.</strong> <a href="vvce-student-feedback.netlify.app/"  target="_blank">Checkout Now</a></p>
 
 ---
 
