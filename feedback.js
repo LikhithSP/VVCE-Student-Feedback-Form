@@ -72,13 +72,7 @@ export async function handleFormSubmit(event) {
     });
     
     const { error } = await supabase.from('student_feedback').insert([
-      { 
-        name, 
-        branch, 
-        sem: parseInt(sem) || 1, // Ensure semester is a number
-        message,
-        user_id: session.user.id
-      }
+      { name, branch, sem, message, user_id: session.user.id }
     ]);
 
     if (error) {
@@ -117,8 +111,8 @@ export async function fetchAndDisplayEntries() {
     // Try to fetch all feedback entries
     const { data, error } = await supabase
       .from('student_feedback')
-      .select('*') // Select all columns
-      .order('created_at', { ascending: false })
+      .select('name, branch, sem, message, created_at')
+      .order('id', { ascending: false })
       .limit(30);
   
     if (error) {
@@ -143,7 +137,7 @@ export async function fetchAndDisplayEntries() {
   
     entriesDiv.innerHTML = data.map(entry => `
       <div class="entry">
-        <div class="name">${escapeHtml(entry.name)} <span style="font-weight:400;color:var(--text-muted);font-size:0.95em;">(${escapeHtml(entry.branch)}, Sem ${escapeHtml(entry.sem)})</span></div>
+        <div class="name">${escapeHtml(entry.name)} <span style="font-weight:400;color:#555;font-size:0.95em;">(${escapeHtml(entry.branch)}, Sem ${escapeHtml(entry.sem)})</span></div>
         <div class="message">${escapeHtml(entry.message)}</div>
         <div class="date">${formatDate(entry.created_at)}</div>
       </div>
