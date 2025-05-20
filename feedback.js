@@ -112,7 +112,7 @@ export async function fetchAndDisplayEntries() {
     const { data, error } = await supabase
       .from('student_feedback')
       .select('name, branch, sem, message, created_at')
-      .order('id', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(30);
   
     if (error) {
