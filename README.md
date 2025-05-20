@@ -1,8 +1,9 @@
 # VVCE Student Feedback Form
 
-<img src="./demo.png">
+<img src="./demo-login.png">
+<img src="./demo-layout.png">
 
-<p align="center"><strong>A modern web app for collecting student feedback at VVCE, with secure authentication and auto-filled forms using Supabase as the backend.</strong></p>
+<p align="center"><strong>A modern web app for collecting student feedback at VVCE [Students Only], with secure authentication and auto-filled forms using Supabase as the backend.</strong></p>
 
 ---
 
