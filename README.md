@@ -21,7 +21,10 @@
 ## How VVCE Students Can Use This App
 
 ### 1. Register (Create an Account)
-IMP : Make sure you use 4VV23CS"your-clg-email-no" for the USN 
+> [!IMPORTANT] 
+> Make sure you use 4VV{year}{branch-name}{your-clg-email-no} format for your USN while registration.
+
+> (e.g if your join year is "2023" : branch is "CS" : email is "vvce23cse0233@vvce.ac.in") then your USN would be : "4VV23CS233"
 - Go to the registration page (`register.html`).
 - Enter your **USN** (e.g., `4VV23CS233`), full name, select your branch and semester, and set a password.
 - The system will automatically generate your VVCE email (e.g., `vvce23cse0233@vvce.ac.in`) from your USN.
